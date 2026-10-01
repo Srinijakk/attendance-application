@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Dashboard - Attendance</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <header>
+        <div class="user-info">
+            <div id="statusDot" class="status-dot"></div>
+            <strong>{{ user.name }}</strong>
+        </div>
+        <a href="/logout">Log out</a>
+    </header>
+    
+    <div class="container center-flex" style="align-items: flex-start; padding-top: 4rem;">
+        <div class="dashboard-grid w-100">
+            <!-- Left Side: Time and Action -->
+            <div class="glass card">
+                <div class="time-display">
+                    <h1 id="clock">--:--:--</h1>
+                    <p id="dateDisplay">Loading date...</p>
+                    <p style="font-size: 0.8rem; margin-top: 0.5rem;">IST (India Standard Time)</p>
+                </div>
+                
+                <div id="cameraWrapper" class="camera-container">
+                    <video id="videoStream" autoplay playsinline></video>
+                    <canvas id="captureCanvas" style="display:none;"></canvas>
+                </div>
+                
+                <div id="messageBox" class="err" style="display: none;"></div>
+
+                <div class="action-buttons" id="mainActions">
+                    <button class="btn btn-success" id="btnCheckIn">Check In</button>
+                    <button class="btn btn-danger" id="btnCheckOut">Check Out</button>
+                </div>
+                
+                <div class="action-buttons" id="cameraActions" style="display: none;">
+                    <button class="btn btn-success" id="btnCaptureSubmit">📸 Capture & Submit</button>
+                    <button class="btn" id="btnCancel">Cancel</button>
+                </div>
+            </div>
+            
+            <!-- Right Side: Status Details -->
+            <div class="glass card status-card">
+                <h2>Today's Activity</h2>
+                <div class="status-item">
+                    <span class="status-label">Current Status</span>
+                    <span class="status-val" id="lblStatus">Loading...</span>
+                </div>
+                <div class="status-item">
+                    <span class="status-label">Check-in Time</span>
+                    <span class="status-val" id="lblCheckIn">--</span>
+                </div>
+                <div class="status-item">
+                    <span class="status-label">Check-out Time</span>
+                    <span class="status-val" id="lblCheckOut">--</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="/static/employee.js"></script>
+</body>
+</html>

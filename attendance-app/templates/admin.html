@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Admin Dashboard - Attendance</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <header>
+        <div class="user-info">
+            <strong>Admin Dashboard</strong>
+        </div>
+        <a href="/logout">Log out</a>
+    </header>
+    
+    <div class="container">
+        <div class="admin-header">
+            <h2>Employee Attendance Records</h2>
+            <div>
+                <input type="date" id="datePicker" class="date-picker">
+                <button class="btn" id="btnRefresh" style="padding: 0.5rem 1rem; margin-left: 0.5rem;">↻ Refresh</button>
+            </div>
+        </div>
+        
+        <div class="glass card" style="padding: 1rem;">
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Employee Name</th>
+                            <th>Picture (In/Out)</th>
+                            <th>Location (In)</th>
+                            <th>Check-in (IST)</th>
+                            <th>Check-out (IST)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        <tr><td colspan="5" style="text-align: center;">Loading data...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <script src="/static/admin.js"></script>
+</body>
+</html>
