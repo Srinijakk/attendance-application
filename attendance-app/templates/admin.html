@@ -15,6 +15,26 @@
     </header>
     
     <div class="container">
+        <div class="glass card" style="padding: 1.5rem; margin-bottom: 2rem;">
+            <h3 style="margin-top: 0; margin-bottom: 0.5rem;">Add New Employee</h3>
+            <form id="addEmployeeForm" style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: flex-end;">
+                <label style="flex: 1; min-width: 120px; font-size: 0.9em; margin-bottom: 0;">Emp Code
+                    <input name="emp_code" placeholder="e.g. EMP005" required style="margin-top: 0.3rem;">
+                </label>
+                <label style="flex: 1; min-width: 150px; font-size: 0.9em; margin-bottom: 0;">Full Name
+                    <input name="name" placeholder="Name" required style="margin-top: 0.3rem;">
+                </label>
+                <label style="flex: 1; min-width: 120px; font-size: 0.9em; margin-bottom: 0;">Username
+                    <input name="username" placeholder="Username" required style="margin-top: 0.3rem;">
+                </label>
+                <label style="flex: 1; min-width: 120px; font-size: 0.9em; margin-bottom: 0;">Password
+                    <input type="password" name="password" placeholder="Password" required style="margin-top: 0.3rem;">
+                </label>
+                <button class="btn" type="submit" style="padding: 0.75rem 1.5rem; margin-bottom: 0.2rem;">Add Employee</button>
+            </form>
+            <div id="addEmployeeMsg" style="margin-top: 1rem; font-size: 0.9em;"></div>
+        </div>
+
         <div class="admin-header">
             <h2>Employee Attendance Records</h2>
             <div>
@@ -31,12 +51,13 @@
                             <th>Employee Name</th>
                             <th>Picture (In/Out)</th>
                             <th>Location (In)</th>
+                            <th>Location (Out)</th>
                             <th>Check-in (IST)</th>
                             <th>Check-out (IST)</th>
                         </tr>
                     </thead>
                     <tbody id="tableBody">
-                        <tr><td colspan="5" style="text-align: center;">Loading data...</td></tr>
+                        <tr><td colspan="6" style="text-align: center;">Loading data...</td></tr>
                     </tbody>
                 </table>
             </div>

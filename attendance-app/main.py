@@ -177,6 +177,18 @@ def attendance(request: Request, date: str | None = None):
     return {"date": date, "rows": [dict(r) for r in rows]}
 
 
+@app.post("/api/add-user")
+async def api_add_user(request: Request, emp_code: str = Form(...), name: str = Form(...), username: str = Form(...), password: str = Form(...)):
+    need_user(request, admin=True)
+    try:
+        with db() as c:
+            c.execute("INSERT INTO employees (emp_code,name,username,password_hash,role) VALUES (?,?,?,?,?)",
+                      (emp_code.strip(), name.strip(), username.strip(), hash_password(password), "employee"))
+        return {"ok": True, "message": f"Added employee {name}"}
+    except Exception as e:
+        raise HTTPException(400, "Error adding user: Username or Employee Code might already exist.")
+
+
 @app.get("/selfie/{emp_code}/{filename}")
 def get_selfie(request: Request, emp_code: str, filename: str):
     user = need_user(request)

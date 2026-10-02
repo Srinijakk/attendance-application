@@ -1,6 +1,8 @@
 const datePicker = document.getElementById('datePicker');
 const tableBody = document.getElementById('tableBody');
 const btnRefresh = document.getElementById('btnRefresh');
+const addEmployeeForm = document.getElementById('addEmployeeForm');
+const addEmployeeMsg = document.getElementById('addEmployeeMsg');
 
 // Set today's date in IST
 function getISTDateString() {
@@ -13,7 +15,7 @@ function getISTDateString() {
 datePicker.value = getISTDateString();
 
 async function loadData() {
-    tableBody.innerHTML = '<tr><td colspan="5" style="text-align: center;">Loading data...</td></tr>';
+    tableBody.innerHTML = '<tr><td colspan="6" style="text-align: center;">Loading data...</td></tr>';
     try {
         const res = await fetch(`/api/attendance?date=${datePicker.value}`);
         if (!res.ok) {
@@ -24,7 +26,7 @@ async function loadData() {
         
         tableBody.innerHTML = '';
         if (data.rows.length === 0) {
-            tableBody.innerHTML = '<tr><td colspan="5" style="text-align: center;">No records found.</td></tr>';
+            tableBody.innerHTML = '<tr><td colspan="6" style="text-align: center;">No records found.</td></tr>';
             return;
         }
         
@@ -49,14 +51,23 @@ async function loadData() {
             }
             tr.appendChild(tdPic);
             
-            // Location
-            const tdLoc = document.createElement('td');
+            // Location In
+            const tdLocIn = document.createElement('td');
             if (row.in_lat && row.in_lon) {
-                tdLoc.innerHTML = `<a href="https://maps.google.com/?q=${row.in_lat},${row.in_lon}" target="_blank">View Map 📍</a>`;
+                tdLocIn.innerHTML = `<a href="https://maps.google.com/?q=${row.in_lat},${row.in_lon}" target="_blank">View Map 📍</a>`;
             } else {
-                tdLoc.innerText = '—';
+                tdLocIn.innerText = '—';
             }
-            tr.appendChild(tdLoc);
+            tr.appendChild(tdLocIn);
+            
+            // Location Out
+            const tdLocOut = document.createElement('td');
+            if (row.out_lat && row.out_lon) {
+                tdLocOut.innerHTML = `<a href="https://maps.google.com/?q=${row.out_lat},${row.out_lon}" target="_blank">View Map 📍</a>`;
+            } else {
+                tdLocOut.innerText = '—';
+            }
+            tr.appendChild(tdLocOut);
             
             // Times
             const tdIn = document.createElement('td');
@@ -71,7 +82,7 @@ async function loadData() {
         });
         
     } catch (err) {
-        tableBody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--danger);">Failed to load data.</td></tr>';
+        tableBody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--danger);">Failed to load data.</td></tr>';
     }
 }
 
@@ -81,3 +92,32 @@ btnRefresh.addEventListener('click', loadData);
 loadData();
 // Auto refresh every 30 seconds
 setInterval(loadData, 30000);
+
+if (addEmployeeForm) {
+    addEmployeeForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        addEmployeeMsg.style.color = 'var(--text-muted)';
+        addEmployeeMsg.innerText = 'Adding employee...';
+        
+        const fd = new FormData(addEmployeeForm);
+        try {
+            const res = await fetch('/api/add-user', {
+                method: 'POST',
+                body: fd
+            });
+            const data = await res.json();
+            if (res.ok) {
+                addEmployeeMsg.style.color = '#4ade80';
+                addEmployeeMsg.innerText = data.message || 'Added successfully';
+                addEmployeeForm.reset();
+                loadData(); // refresh the table if needed
+            } else {
+                addEmployeeMsg.style.color = 'var(--danger)';
+                addEmployeeMsg.innerText = data.detail || 'Error adding employee';
+            }
+        } catch (err) {
+            addEmployeeMsg.style.color = 'var(--danger)';
+            addEmployeeMsg.innerText = 'Failed to connect to server';
+        }
+    });
+}
