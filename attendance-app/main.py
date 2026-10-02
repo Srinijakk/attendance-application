@@ -118,7 +118,7 @@ def status(request: Request):
             "today": now_ist().strftime("%Y-%m-%d")}
 
 
-async def save_attendance(request, kind, selfie, lat, lon):
+async def save_attendance(request, kind, selfie, lat, lon, branch=None):
     user = need_user(request)
     row = today_row(user["id"])
     if kind == "in" and row:
@@ -143,8 +143,8 @@ async def save_attendance(request, kind, selfie, lat, lon):
 
     with db() as c:
         if kind == "in":
-            c.execute("INSERT INTO attendance (employee_id,date,check_in,in_lat,in_lon,in_selfie) "
-                      "VALUES (?,?,?,?,?,?)", (user["id"], t.strftime("%Y-%m-%d"), stamp, lat, lon, path))
+            c.execute("INSERT INTO attendance (employee_id,date,branch,check_in,in_lat,in_lon,in_selfie) "
+                      "VALUES (?,?,?,?,?,?,?)", (user["id"], t.strftime("%Y-%m-%d"), branch, stamp, lat, lon, path))
         else:
             c.execute("UPDATE attendance SET check_out=?,out_lat=?,out_lon=?,out_selfie=? WHERE id=?",
                       (stamp, lat, lon, path, row["id"]))
@@ -153,8 +153,8 @@ async def save_attendance(request, kind, selfie, lat, lon):
 
 @app.post("/api/check-in")
 async def check_in(request: Request, lat: float = Form(...), lon: float = Form(...),
-                   selfie: UploadFile = File(...)):
-    return await save_attendance(request, "in", selfie, lat, lon)
+                   selfie: UploadFile = File(...), branch: str = Form(...)):
+    return await save_attendance(request, "in", selfie, lat, lon, branch)
 
 
 @app.post("/api/check-out")
@@ -164,29 +164,37 @@ async def check_out(request: Request, lat: float = Form(...), lon: float = Form(
 
 
 @app.get("/api/attendance")
-def attendance(request: Request, date: str | None = None):
+def attendance(request: Request, date: str | None = None, branch: str | None = None):
     need_user(request, admin=True)
     date = date or now_ist().strftime("%Y-%m-%d")
     with db() as c:
-        rows = c.execute("""
+        query = """
             SELECT e.name, e.emp_code, a.check_in, a.check_out, a.in_lat, a.in_lon,
-                   a.out_lat, a.out_lon, a.in_selfie, a.out_selfie
+                   a.out_lat, a.out_lon, a.in_selfie, a.out_selfie, a.branch
             FROM employees e
             LEFT JOIN attendance a ON a.employee_id=e.id AND a.date=?
-            WHERE e.role='employee' ORDER BY e.name""", (date,)).fetchall()
+            WHERE e.role='employee'"""
+        params = [date]
+        if branch:
+            query += " AND a.branch=?"
+            params.append(branch)
+        query += " ORDER BY e.name"
+        rows = c.execute(query, params).fetchall()
     return {"date": date, "rows": [dict(r) for r in rows]}
 
 
 @app.post("/api/add-user")
-async def api_add_user(request: Request, emp_code: str = Form(...), name: str = Form(...), username: str = Form(...), password: str = Form(...)):
+async def api_add_user(request: Request, username: str = Form(...), password: str = Form(...)):
     need_user(request, admin=True)
     try:
+        emp_code = f"EMP-{username.strip()}"
+        name = username.strip()
         with db() as c:
             c.execute("INSERT INTO employees (emp_code,name,username,password_hash,role) VALUES (?,?,?,?,?)",
-                      (emp_code.strip(), name.strip(), username.strip(), hash_password(password), "employee"))
-        return {"ok": True, "message": f"Added employee {name}"}
+                      (emp_code, name, username.strip(), hash_password(password), "employee"))
+        return {"ok": True, "message": f"Added employee {username.strip()}"}
     except Exception as e:
-        raise HTTPException(400, "Error adding user: Username or Employee Code might already exist.")
+        raise HTTPException(400, "Error adding user: Username might already exist.")
 
 
 @app.get("/selfie/{emp_code}/{filename}")

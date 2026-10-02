@@ -32,6 +32,17 @@
                 
                 <div id="messageBox" class="err" style="display: none;"></div>
 
+                <div style="margin-top: 1rem; margin-bottom: 1rem; text-align: left;">
+                    <label for="branchSelect" style="display: block; font-size: 0.9em; margin-bottom: 0.3rem;">Select Branch (Mandatory)*</label>
+                    <select id="branchSelect" required style="width: 100%; padding: 0.5rem; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; border-radius: 4px;">
+                        <option value="" disabled selected>Select your branch</option>
+                        <option value="Deloitte - Prestige trade tower">Deloitte - Prestige trade tower</option>
+                        <option value="Deloitte - Ecospace">Deloitte - Ecospace</option>
+                        <option value="Lowes">Lowes</option>
+                        <option value="IBM - FTP">IBM - FTP</option>
+                    </select>
+                </div>
+
                 <div class="action-buttons" id="mainActions">
                     <button class="btn btn-success" id="btnCheckIn">Check In</button>
                     <button class="btn btn-danger" id="btnCheckOut">Check Out</button>

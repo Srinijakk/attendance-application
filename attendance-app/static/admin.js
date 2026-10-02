@@ -17,7 +17,8 @@ datePicker.value = getISTDateString();
 async function loadData() {
     tableBody.innerHTML = '<tr><td colspan="6" style="text-align: center;">Loading data...</td></tr>';
     try {
-        const res = await fetch(`/api/attendance?date=${datePicker.value}`);
+        const branchVal = document.getElementById('branchFilter') ? document.getElementById('branchFilter').value : '';
+        const res = await fetch(`/api/attendance?date=${datePicker.value}&branch=${encodeURIComponent(branchVal)}`);
         if (!res.ok) {
             if(res.status === 401) window.location.href = '/login';
             return;
@@ -88,6 +89,8 @@ async function loadData() {
 
 datePicker.addEventListener('change', loadData);
 btnRefresh.addEventListener('click', loadData);
+const branchFilter = document.getElementById('branchFilter');
+if (branchFilter) branchFilter.addEventListener('change', loadData);
 
 loadData();
 // Auto refresh every 30 seconds

@@ -74,6 +74,12 @@ function showMessage(msg, isError = true) {
 
 // Camera & Location
 async function startAction(action) {
+    const branchSelect = document.getElementById('branchSelect');
+    if (!branchSelect.value) {
+        showMessage('Please select your branch first.', true);
+        return;
+    }
+
     currentAction = action;
     messageBox.style.display = 'none';
     
@@ -135,6 +141,7 @@ btnCaptureSubmit.addEventListener('click', async () => {
         formData.append('selfie', blob, 'selfie.jpg');
         formData.append('lat', currentLoc.lat);
         formData.append('lon', currentLoc.lon);
+        formData.append('branch', document.getElementById('branchSelect').value);
         
         try {
             const endpoint = currentAction === 'in' ? '/api/check-in' : '/api/check-out';

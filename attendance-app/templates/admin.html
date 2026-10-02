@@ -18,12 +18,6 @@
         <div class="glass card" style="padding: 1.5rem; margin-bottom: 2rem;">
             <h3 style="margin-top: 0; margin-bottom: 0.5rem;">Add New Employee</h3>
             <form id="addEmployeeForm" style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: flex-end;">
-                <label style="flex: 1; min-width: 120px; font-size: 0.9em; margin-bottom: 0;">Emp Code
-                    <input name="emp_code" placeholder="e.g. EMP005" required style="margin-top: 0.3rem;">
-                </label>
-                <label style="flex: 1; min-width: 150px; font-size: 0.9em; margin-bottom: 0;">Full Name
-                    <input name="name" placeholder="Name" required style="margin-top: 0.3rem;">
-                </label>
                 <label style="flex: 1; min-width: 120px; font-size: 0.9em; margin-bottom: 0;">Username
                     <input name="username" placeholder="Username" required style="margin-top: 0.3rem;">
                 </label>
@@ -38,6 +32,13 @@
         <div class="admin-header">
             <h2>Employee Attendance Records</h2>
             <div>
+                <select id="branchFilter" class="date-picker" style="margin-right: 0.5rem; max-width: 150px;">
+                    <option value="">All Branches</option>
+                    <option value="Deloitte - Prestige trade tower">Deloitte - Prestige trade tower</option>
+                    <option value="Deloitte - Ecospace">Deloitte - Ecospace</option>
+                    <option value="Lowes">Lowes</option>
+                    <option value="IBM - FTP">IBM - FTP</option>
+                </select>
                 <input type="date" id="datePicker" class="date-picker">
                 <button class="btn" id="btnRefresh" style="padding: 0.5rem 1rem; margin-left: 0.5rem;">↻ Refresh</button>
             </div>

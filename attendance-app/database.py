@@ -27,9 +27,14 @@ def init_db():
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             employee_id INTEGER NOT NULL REFERENCES employees(id),
             date TEXT NOT NULL,
+            branch TEXT,
             check_in TEXT, check_out TEXT,
             in_lat REAL, in_lon REAL, out_lat REAL, out_lon REAL,
             in_selfie TEXT, out_selfie TEXT,
             UNIQUE(employee_id, date)
         );
         """)
+        try:
+            c.execute("ALTER TABLE attendance ADD COLUMN branch TEXT")
+        except sqlite3.OperationalError:
+            pass
