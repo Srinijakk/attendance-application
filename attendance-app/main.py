@@ -8,7 +8,7 @@ from fastapi.templating import Jinja2Templates
 from starlette.middleware.sessions import SessionMiddleware
 
 from database import db, init_db
-from auth import verify_password, get_user
+from auth import verify_password, get_user, hash_password
 
 IST = timezone(timedelta(hours=5, minutes=30))
 DATA_DIR = os.environ.get("DATA_DIR", ".")
@@ -21,6 +21,14 @@ app.add_middleware(SessionMiddleware,
 app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 init_db()
+
+with db() as c:
+    if not c.execute("SELECT 1 FROM employees WHERE username='surya'").fetchone():
+        c.execute("INSERT INTO employees (emp_code,name,username,password_hash,role) VALUES (?,?,?,?,?)",
+                  ("EMP004", "Surya", "surya", hash_password("pass"), "employee"))
+    if not c.execute("SELECT 1 FROM employees WHERE username='admin'").fetchone():
+        c.execute("INSERT INTO employees (emp_code,name,username,password_hash,role) VALUES (?,?,?,?,?)",
+                  ("ADM001", "Admin", "admin", hash_password("admin123"), "admin"))
 
 
 def now_ist():
