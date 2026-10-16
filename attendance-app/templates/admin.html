@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>Admin Dashboard - Attendance</title>
-    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="/static/style.css?v=2.1">
 </head>
 <body>
     <header>
@@ -50,21 +50,23 @@
                     <thead>
                         <tr>
                             <th>Employee Name</th>
+                            <th>Branch</th>
                             <th>Picture (In/Out)</th>
                             <th>Location (In)</th>
                             <th>Location (Out)</th>
                             <th>Check-in (IST)</th>
                             <th>Check-out (IST)</th>
+                            <th>Geofence Status</th>
                         </tr>
                     </thead>
                     <tbody id="tableBody">
-                        <tr><td colspan="6" style="text-align: center;">Loading data...</td></tr>
+                        <tr><td colspan="8" style="text-align: center;">Loading data...</td></tr>
                     </tbody>
                 </table>
             </div>
         </div>
     </div>
     
-    <script src="/static/admin.js"></script>
+    <script src="/static/admin.js?v=2.1"></script>
 </body>
 </html>

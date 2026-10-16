@@ -21,7 +21,7 @@ BRANCH_LOCATIONS = {
     "Lowes": (13.04448815778972, 77.61869989999472),
     "IBM - FTP": (12.98372007285447, 77.73118068461707),
 }
-MAX_ALLOWED_DISTANCE_METERS = 100.0
+MAX_ALLOWED_DISTANCE_METERS = 1000.0
 
 
 def calculate_distance_meters(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
@@ -136,10 +136,22 @@ def status(request: Request):
         state = "out"
     elif row and row["check_in"]:
         state = "in"
+
+    branch_val = row["branch"] if (row and "branch" in row.keys()) else None
+    if not branch_val and row and row["in_lat"] and row["in_lon"]:
+        closest_b = None
+        closest_d = float("inf")
+        for b_name, b_pos in BRANCH_LOCATIONS.items():
+            d = calculate_distance_meters(row["in_lat"], row["in_lon"], b_pos[0], b_pos[1])
+            if d < closest_d:
+                closest_d = d
+                closest_b = b_name
+        branch_val = closest_b
+
     return {"state": state,
             "check_in": row["check_in"] if row else None,
             "check_out": row["check_out"] if row else None,
-            "branch": row["branch"] if (row and "branch" in row.keys()) else None,
+            "branch": branch_val,
             "today": now_ist().strftime("%Y-%m-%d")}
 
 
@@ -228,7 +240,46 @@ def attendance(request: Request, date: str | None = None, branch: str | None = N
             params.append(branch)
         query += " ORDER BY e.name"
         rows = c.execute(query, params).fetchall()
-    return {"date": date, "rows": [dict(r) for r in rows]}
+
+    result = []
+    for r in rows:
+        item = dict(r)
+        emp_branch = item.get("branch")
+
+        coords = BRANCH_LOCATIONS.get(emp_branch) if emp_branch else None
+        # Auto-detect nearest branch for legacy records or missing branch
+        if not coords and item.get("in_lat") and item.get("in_lon"):
+            closest_b = None
+            closest_d = float("inf")
+            for b_name, b_pos in BRANCH_LOCATIONS.items():
+                d = calculate_distance_meters(item["in_lat"], item["in_lon"], b_pos[0], b_pos[1])
+                if d < closest_d:
+                    closest_d = d
+                    closest_b = b_name
+            if closest_b:
+                emp_branch = closest_b
+                coords = BRANCH_LOCATIONS[closest_b]
+                item["branch"] = emp_branch
+
+        if coords and item.get("in_lat") and item.get("in_lon"):
+            dist_in = calculate_distance_meters(item["in_lat"], item["in_lon"], coords[0], coords[1])
+            item["in_dist_m"] = round(dist_in, 1)
+            item["in_within_range"] = dist_in <= MAX_ALLOWED_DISTANCE_METERS
+        else:
+            item["in_dist_m"] = None
+            item["in_within_range"] = None
+
+        if coords and item.get("out_lat") and item.get("out_lon"):
+            dist_out = calculate_distance_meters(item["out_lat"], item["out_lon"], coords[0], coords[1])
+            item["out_dist_m"] = round(dist_out, 1)
+            item["out_valid"] = dist_out <= MAX_ALLOWED_DISTANCE_METERS
+        else:
+            item["out_dist_m"] = None
+            item["out_valid"] = None
+
+        result.append(item)
+
+    return {"date": date, "rows": result, "max_distance_m": MAX_ALLOWED_DISTANCE_METERS}
 
 
 @app.post("/api/add-user")
