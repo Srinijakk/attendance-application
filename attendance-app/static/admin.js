@@ -36,7 +36,7 @@ async function loadData() {
             
             // Name
             const tdName = document.createElement('td');
-            tdName.innerHTML = `<strong>${row.name}</strong><br><small style="color: var(--text-muted)">${row.emp_code}</small>`;
+            tdName.innerHTML = `<strong>${row.name}</strong><br><small style="color: var(--text-muted)">${row.emp_code}</small>${row.branch ? `<br><small style="color: #60a5fa; font-weight: 500;">🏢 ${row.branch}</small>` : ''}`;
             tr.appendChild(tdName);
             
             // Picture

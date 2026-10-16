@@ -42,7 +42,12 @@ async function loadStatus() {
         
         const dot = document.getElementById('statusDot');
         const lbl = document.getElementById('lblStatus');
+        const branchSelect = document.getElementById('branchSelect');
         
+        if (data.branch && branchSelect) {
+            branchSelect.value = data.branch;
+        }
+
         dot.className = 'status-dot';
         btnCheckIn.disabled = false;
         btnCheckOut.disabled = false;
@@ -51,14 +56,17 @@ async function loadStatus() {
             dot.classList.add('in');
             lbl.innerText = 'Checked In';
             btnCheckIn.disabled = true; // already checked in
+            if (branchSelect) branchSelect.disabled = true;
         } else if (data.state === 'out') {
             dot.classList.add('out');
             lbl.innerText = 'Checked Out';
             btnCheckIn.disabled = true;
             btnCheckOut.disabled = true;
+            if (branchSelect) branchSelect.disabled = true;
         } else {
             lbl.innerText = 'Not Checked In';
             btnCheckOut.disabled = true; // must check in first
+            if (branchSelect) branchSelect.disabled = false;
         }
     } catch(err) {
         console.error(err);
@@ -91,12 +99,16 @@ async function startAction(action) {
     
     try {
         const pos = await new Promise((resolve, reject) => {
-            navigator.geolocation.getCurrentPosition(resolve, reject, { enableHighAccuracy: true, timeout: 5000 });
+            navigator.geolocation.getCurrentPosition(resolve, reject, {
+                enableHighAccuracy: true,
+                timeout: 10000,
+                maximumAge: 0
+            });
         });
         currentLoc.lat = pos.coords.latitude;
         currentLoc.lon = pos.coords.longitude;
     } catch (err) {
-        showMessage('Location access is required for attendance.');
+        showMessage('Location access is required: ' + (err.message || 'Please enable GPS permissions.'));
         return;
     }
     

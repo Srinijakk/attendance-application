@@ -1,0 +1,11 @@
+__pycache__/
+*.py[cod]
+*$py.class
+*.db
+attendance-app/attendance.db
+attendance-app/__pycache__/
+attendance-app/selfies/
+selfies/
+.env
+.venv/
+env/
