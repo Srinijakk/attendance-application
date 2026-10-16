@@ -21,7 +21,7 @@ BRANCH_LOCATIONS = {
     "Lowes": (13.04448815778972, 77.61869989999472),
     "IBM - FTP": (12.98372007285447, 77.73118068461707),
 }
-MAX_ALLOWED_DISTANCE_METERS = 1000.0
+MAX_ALLOWED_DISTANCE_METERS = 100.0
 
 
 def calculate_distance_meters(lat1: float, lon1: float, lat2: float, lon2: float) -> float:

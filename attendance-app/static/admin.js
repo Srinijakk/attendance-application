@@ -66,7 +66,7 @@ async function loadData() {
                 if (distM === null || distM === undefined) return '';
                 const distText = distM < 1000 ? `${Math.round(distM)}m` : `${(distM / 1000).toFixed(2)}km`;
                 if (isWithin) {
-                    return `<div style="margin-top: 0.35rem;"><span class="badge badge-success">✅ ${distText} (Within 1km)</span></div>`;
+                    return `<div style="margin-top: 0.35rem;"><span class="badge badge-success">✅ ${distText} (Within 100m)</span></div>`;
                 } else {
                     return `<div style="margin-top: 0.35rem;"><span class="badge badge-danger">⚠️ ${distText} (Outside)</span></div>`;
                 }
@@ -107,9 +107,9 @@ async function loadData() {
             if (!row.check_in) {
                 tdStatus.innerHTML = `<span class="badge badge-neutral">— Not Marked</span>`;
             } else if (row.in_within_range === true && (row.out_within_range === true || row.out_within_range === null)) {
-                tdStatus.innerHTML = `<span class="badge badge-success">✅ Verified (&lt;1000m)</span>`;
+                tdStatus.innerHTML = `<span class="badge badge-success">✅ Verified (&lt;100m)</span>`;
             } else if (row.in_within_range === false || row.out_within_range === false) {
-                tdStatus.innerHTML = `<span class="badge badge-danger">❌ Outside (&gt;1000m)</span>`;
+                tdStatus.innerHTML = `<span class="badge badge-danger">❌ Outside (&gt;100m)</span>`;
             } else {
                 tdStatus.innerHTML = `<span class="badge badge-warning">⚠️ No GPS / Branch</span>`;
             }
